@@ -12,10 +12,10 @@ CSS = """
 :root{--navy:#0a2a40;--teal:#0b7e93;--orange:#ff8d1c;--surface:#eef6f8;--bg:#f5f7fa;--ink:#1c2733;--mut:#6b7a8a}
 *{box-sizing:border-box}body{margin:0;font-family:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
 a{color:inherit;text-decoration:none}
-header{background:var(--navy);color:#fff;border-bottom:4px solid var(--teal)}
+header{background:#fff;color:var(--navy);border-bottom:4px solid var(--teal)}
 .bar{max-width:1100px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{font-weight:800;letter-spacing:.5px}.brand span{color:var(--teal);filter:brightness(1.6)}.brand b{color:var(--orange)}
-.bar a.back{font-size:14px;opacity:.9;border:1px solid rgba(255,255,255,.4);padding:6px 12px;border-radius:6px}
+.brand{font-weight:800;display:flex;align-items:center;gap:12px}.brand span{color:var(--teal);filter:brightness(1.6)}.brand b{color:var(--orange)}
+.bar a.back{font-size:14px;color:var(--teal);border:1px solid var(--teal);padding:6px 12px;border-radius:6px}
 .hero{max-width:1100px;margin:auto;padding:28px 20px 8px}.hero h1{margin:0;font-size:28px;color:var(--navy);border-left:5px solid var(--orange);padding-left:12px}.hero p{margin:6px 0 0;color:var(--mut)}
 .grid{max-width:1100px;margin:auto;padding:16px 20px 48px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
 .card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;flex-direction:column}
@@ -46,7 +46,7 @@ def page(title, body, desc="", canonical="/"):
 <link rel="canonical" href="https://{DOMAIN}{canonical}">
 <meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(desc)}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap"><style>{CSS}</style></head><body>
-<header><div class="bar"><a class="brand" href="/"><img src="/images/logo.png" alt="Solvera Logistics" style="height:40px;vertical-align:middle;background:#fff;border-radius:6px;padding:4px 8px"> · Tin tức</a>
+<header><div class="bar"><a class="brand" href="/"><img src="/images/logo.png" alt="Solvera Logistics" style="height:40px;display:block"><span>Tin tức</span></a>
 <a class="back" href="{MAIN}">← Về website chính</a></div></header>
 {body}
 <footer>© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</footer>
@@ -79,7 +79,7 @@ def main():
 
     cards = []
     for p in posts:
-        img = f'<img src="{html.escape(p.get("image",""))}" alt="" loading="lazy">' if p.get("image") else '<img alt="">'
+        img = f'<img src="{html.escape(p.get("image",""))}" alt="" loading="lazy">' if p.get("image") else ''
         cards.append(f'<a class="card" href="/{p["slug"]}/">{img}<div class="in"><span class="tag">{html.escape(p["category"])}</span>'
                      f'<h2>{html.escape(p["title"])}</h2><p>{html.escape(p["summary"])}</p><div class="date">{p["date"]}</div></div></a>')
     idx = f'<div class="hero"><h1>{SITE}</h1><p>Cập nhật hàng hải, xuất nhập khẩu, hàng không và tuyến Nhật – Việt.</p></div><div class="grid">{"".join(cards)}</div>'
