@@ -25,6 +25,17 @@ CONTACT = ('<section class="contact" id="lien-he"><h2><small>LIÊN HỆ</small>L
  '<p><b>Email:</b> <a href="mailto:admin@solveralogistics.vn">admin@solveralogistics.vn</a></p></div></section>')
 if 'class="contact"' not in body: body += CONTACT
 css += CONTACT_CSS
+# thứ tự chuẩn của chị: Hàng hải, Hàng không, Xuất nhập khẩu
+OLD_T = "Hàng hải, Xuất nhập khẩu & Hàng không"; NEW_T = "Hàng hải, Hàng không & Xuất nhập khẩu"
+mast = mast.replace(OLD_T, NEW_T).replace(OLD_T.replace("&","&amp;"), NEW_T.replace("&","&amp;")); title = title.replace(OLD_T, NEW_T)
+i1 = body.find('<h2 id="xnk"'); i2 = body.find('<h2 id="hang-khong"'); i3 = body.find('<section class="contact"')
+i3 = i3 if i3 > 0 else len(body)
+k = body.find('<h2 id="khuyen-nghi"')
+if 0 < i1 < i2 < k:
+    xnk, hk = body[i1:i2], body[i2:k]
+    xnk = re.sub(r'(PHẦN )\d', r'\g<1>3', xnk, count=1); hk = re.sub(r'(PHẦN )\d', r'\g<1>2', hk, count=1)
+    body = body[:i1] + hk + xnk + body[k:]
+    body = re.sub(r'(<a href="#xnk">[^<]*</a>)(<a href="#hang-khong">[^<]*</a>)', r'\2\1', body)
 p = pathlib.Path("posts.json")
 posts = json.loads(p.read_text(encoding="utf8"))
 posts = [x for x in posts if x["slug"] != slug]
