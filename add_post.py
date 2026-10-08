@@ -19,7 +19,7 @@ body = re.sub(r'<a href="#bai-dang">.*?</a>', "", body)   # bỏ nút mục lụ
 body = re.sub(r'<script.*?</script>', "", body, flags=re.S)
 body = re.sub(r'<img[^>]*data:image[^>]*>', "", body)
 CONTACT_CSS = ".contact-card{background:var(--surface,#eef6f8);border-left:4px solid var(--orange,#ff8d1c);border-radius:10px;padding:14px 18px;margin:8px 0 0}.contact-card p{margin:6px 0}.contact-card a{color:var(--link,#0a6d80);font-weight:700}"
-CONTACT = ('<section class="contact" id="lien-he"><h2><small>LIÊN HỆ</small>Liên hệ Solvera Logistics</h2><div class="contact-card">'
+CONTACT = ('<section class="contact" id="lien-he"><div class="contact-card">'
  '<p>Cần tư vấn, liên hệ:</p>'
  '<p><b>Hotline / Zalo / WhatsApp:</b> <a href="tel:+84913034407">+84 913 034 407</a> · <a href="https://zalo.me/84913034407" target="_blank" rel="noopener">Zalo</a> · <a href="https://wa.me/84913034407" target="_blank" rel="noopener">WhatsApp</a></p>'
  '<p><b>Email:</b> <a href="mailto:admin@solveralogistics.vn">admin@solveralogistics.vn</a></p></div></section>')
