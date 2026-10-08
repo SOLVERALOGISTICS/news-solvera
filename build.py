@@ -52,6 +52,22 @@ def page(title, body, desc="", canonical="/"):
 <footer>© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</footer>
 </body></html>"""
 
+def full_page(p):
+    t = html.escape(p["title"] + " | " + SITE)
+    return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{t}</title><meta name="description" content="{html.escape(p["summary"])}">
+<link rel="canonical" href="https://{DOMAIN}/{p["slug"]}/">
+<meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(p["summary"])}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
+<style>{p["page_css"]}</style>
+<style>.svtop{{background:#061520;color:#fff;font-family:'Be Vietnam Pro',sans-serif}}.svtop div{{max-width:1100px;margin:auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}}.svtop a{{color:#fff;text-decoration:none}}.svtop b{{color:#ff8d1c}}.svtop .bk{{font-size:14px;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:6px}}.svfoot{{background:#061520;color:#cfd8e3;text-align:center;padding:22px 16px;font:14px 'Be Vietnam Pro',sans-serif;border-top:4px solid #ff8d1c}}.svfoot a{{color:#ff8d1c}}</style></head><body>
+<div class="svtop"><div><a href="/"><b>SOLVERA</b> LOGISTICS · Tin tức</a><a class="bk" href="{MAIN}">← Về website chính</a></div></div>
+{p["mast_html"]}
+<main class="wrap">{p["main_html"]}</main>
+<div class="svfoot">© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</div>
+</body></html>"""
+
 def main():
     posts = json.loads((ROOT / "posts.json").read_text(encoding="utf-8"))
     posts.sort(key=lambda p: p["date"], reverse=True)
@@ -72,6 +88,8 @@ def main():
     for p in posts:
         d = OUT / p["slug"]
         d.mkdir()
+        if p.get("main_html"):
+            (d / "index.html").write_text(full_page(p), encoding="utf8"); continue
         cover = f'<img class="cover" src="{html.escape(p["image"])}" alt="">' if p.get("image") else ""
         nav = '<nav class="jump"><a href="#hang-hai">Hàng hải</a><a href="#xnk">Xuất nhập khẩu</a><a href="#hang-khong">Hàng không</a><a href="#khuyen-nghi">Khuyến nghị</a></nav>' if 'id="hang-hai"' in p["body_html"] else ""
         body = (f'<div class="mast"><div class="w"><div class="eyebrow">Solvera Logistics · {html.escape(p["category"])}</div><h1>{html.escape(p["title"])}</h1>'
