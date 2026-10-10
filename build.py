@@ -49,7 +49,7 @@ def page(title, body, desc="", canonical="/"):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{t}</title><meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="https://{DOMAIN}{canonical}">
-<meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(desc)}">
+<meta property="og:image" content="https://news.solveralogistics.vn/images/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(desc)}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap"><style>{CSS}</style></head><body>
 <header><div class="bar"><a class="brand" href="/"><img src="/images/logo.png" alt="Solvera Logistics" style="height:40px;display:block"><span>Tin tức</span></a>
 {LANG}<a class="back" href="{MAIN}">← Về website chính</a></div></header>
@@ -63,7 +63,7 @@ def full_page(p):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{t}</title><meta name="description" content="{html.escape(p["summary"])}">
 <link rel="canonical" href="https://{DOMAIN}/{p["slug"]}/">
-<meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(p["summary"])}">
+<meta property="og:image" content="https://news.solveralogistics.vn/images/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(p["summary"])}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
 <style>{p["page_css"]}</style>
 <style>.svtop{{background:#fff;color:#0a2a40;border-bottom:4px solid #0b7e93;font-family:'Be Vietnam Pro',sans-serif}}.svtop div{{max-width:1100px;margin:auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}}.svtop a{{color:#0a2a40;text-decoration:none}}.svtop .lg{{display:flex;align-items:center;gap:12px;font-weight:700}}.svtop img{{display:block;height:40px;width:auto}}.svtop b{{color:#ff8d1c}}.svtop .bk{{font-size:14px;border:1px solid #0b7e93;color:#0b7e93;padding:5px 12px;border-radius:6px}}.svfoot{{background:#061520;color:#cfd8e3;text-align:center;padding:22px 16px;font:14px 'Be Vietnam Pro',sans-serif;border-top:4px solid #ff8d1c}}.svfoot a{{color:#ff8d1c}}</style></head><body>
