@@ -83,7 +83,7 @@ def main():
         cards.append(f'<a class="card" href="/{p["slug"]}/">{img}<div class="in"><span class="tag">{html.escape(p["category"])}</span>'
                      f'<h2>{html.escape(p["title"])}</h2><p>{html.escape(p["summary"])}</p><div class="date">{p["date"]}</div></div></a>')
     idx = f'<div class="hero"><h1>{SITE}</h1><p>Cập nhật hàng hải, xuất nhập khẩu, hàng không và tuyến Nhật – Việt.</p></div><div class="grid">{"".join(cards)}</div>'
-    (OUT / "index.html").write_text(page(SITE, idx, "Tin tức logistics, hàng hải, xuất nhập khẩu từ Solvera Logistics"), encoding="utf-8")
+    (OUT / "index.html").write_text(page(SITE, idx, "Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu"), encoding="utf-8")
 
     for p in posts:
         d = OUT / p["slug"]
