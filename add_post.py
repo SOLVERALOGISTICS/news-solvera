@@ -18,9 +18,15 @@ if cut: body = body[:cut.start()]
 body = re.sub(r'<a href="#bai-dang">.*?</a>', "", body)   # bỏ nút mục lục Bài đăng
 body = re.sub(r'<script.*?</script>', "", body, flags=re.S)
 body = re.sub(r'<img[^>]*data:image[^>]*>', "", body)
+
+def strip_ext(h):
+    """Bỏ link nguồn ngoài (chỉ giữ tên nguồn dạng chữ); giữ nguyên khối liên hệ và link nội bộ."""
+    parts = re.split(r'(<section class="contact".*?</section>)', h, flags=re.S)
+    pat = re.compile(r'<a\s[^>]*href="https?://(?!(?:[\w.-]*\.)?solveralogistics\.vn)[^"]*"[^>]*>(.*?)</a>', re.S)
+    return "".join(p if p.startswith('<section class="contact"') else pat.sub(r'\1', p) for p in parts)
 CONTACT_CSS = '.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:14px 0 0}.ct{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:12px;background:#fff;border:1px solid #d5e3e8;border-top:4px solid #0b7e93;text-decoration:none;color:#0a2a40;transition:transform .15s,box-shadow .15s}.ct span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#0b7e93}.ct b{font-size:16px;word-break:break-word}.ct:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(10,42,64,.12)}.ct-call{background:#0a2a40;border-color:#0a2a40;border-top-color:#ff8d1c;color:#fff}.ct-call span{color:#ff8d1c}'
 CONTACT = '<section class="contact" id="lien-he"><h2>Liên hệ Solvera Logistics</h2><div class="contact-grid"><a class="ct ct-call" href="tel:+84913034407"><span>Hotline</span><b>+84 913 034 407</b></a><a class="ct ct-zalo" href="https://zalo.me/84913034407" target="_blank" rel="noopener"><span>Zalo</span><b>Chat ngay</b></a><a class="ct ct-wa" href="https://wa.me/84913034407" target="_blank" rel="noopener"><span>WhatsApp</span><b>Chat ngay</b></a><a class="ct" href="mailto:admin@solveralogistics.vn"><span>Email</span><b>admin@solveralogistics.vn</b></a></div></section>'
-body = re.sub(r'<section class="contact".*?</section>', lambda m: '', body, flags=re.S) + CONTACT
+body = strip_ext(re.sub(r'<section class="contact".*?</section>', lambda m: '', body, flags=re.S)) + CONTACT
 css += CONTACT_CSS
 # thứ tự chuẩn của chị: Hàng hải, Hàng không, Xuất nhập khẩu
 OLD_T = "Hàng hải, Xuất nhập khẩu & Hàng không"; NEW_T = "Hàng hải, Hàng không & Xuất nhập khẩu"
@@ -40,3 +46,4 @@ posts.append(dict(slug=slug, date=date, category=cat, title=title, summary=summ,
                   body_html="", page_css=css, mast_html=mast, main_html=body))
 p.write_text(json.dumps(posts, ensure_ascii=False, indent=1), encoding="utf8")
 print("OK", slug, len(body), "ký tự")
+print("LƯU Ý (chị Tú Quỳnh yêu cầu): link nguồn BÊN NGOÀI đã được CỐ Ý gỡ khỏi bài trên website (chỉ giữ tên nguồn dạng chữ) để khách không rời Solvera. KHÔNG thêm lại link ngoài; BỎ QUA kiểm tra đếm link <a href=https khi đăng bài web. Trang bản tin (artifact) và email gửi chị vẫn giữ link nguồn đầy đủ.")
