@@ -5,7 +5,7 @@ import json, html, pathlib, shutil
 ROOT = pathlib.Path(__file__).parent
 OUT = ROOT / "docs"
 DOMAIN = "news.solveralogistics.vn"
-SITE = "Tin tức Solvera Logistics"
+SITE = "Solvera Logistics News"
 MAIN = "https://solveralogistics.vn"
 
 CSS = """
@@ -54,7 +54,7 @@ def page(title, body, desc="", canonical="/"):
 <header><div class="bar"><a class="brand" href="/"><img src="/images/logo.png" alt="Solvera Logistics" style="height:40px;display:block"><span>News</span></a>
 {LANG}<a class="back" href="{MAIN}">← Main website</a></div></header>
 {body}
-<footer>© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</footer>
+<footer>© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hanoi</footer>
 </body></html>"""
 
 def full_page(p):
@@ -70,7 +70,7 @@ def full_page(p):
 <div class="svtop"><div><a href="/" class="lg"><img src="/images/logo.png" alt="Solvera Logistics" height="40"><span>News</span></a>{LANG}<a class="bk" href="{MAIN}">← Main website</a></div></div>
 {p["mast_html"]}
 <main class="wrap">{p["main_html"]}</main>
-<div class="svfoot">© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</div>
+<div class="svfoot">© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hanoi</div>
 </body></html>"""
 
 def main():
