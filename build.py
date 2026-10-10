@@ -38,6 +38,11 @@ article{background:#fff;max-width:780px;margin:0 auto;padding:8px 20px 56px}arti
 footer{background:var(--navy);color:#cfd8e3;text-align:center;padding:22px 16px;font-size:14px}footer a{color:var(--orange)}
 """
 
+LANG = ('<style>.lang{display:flex;gap:6px;align-items:center;margin-left:auto;margin-right:12px}.lang a{font:600 13px "Be Vietnam Pro",sans-serif;color:#0b7e93;border:1.5px solid #0b7e93;border-radius:999px;padding:4px 10px;text-decoration:none;white-space:nowrap}.lang a:hover{background:#0b7e93;color:#fff}.goog-te-banner-frame,#goog-gt-tt{display:none!important}body{top:0!important}@media(max-width:560px){.lang{margin-right:6px}.lang a{padding:3px 8px;font-size:12px}}</style>'
+ '<span class="lang notranslate" translate="no"><a id="l-vi" href="#">VI</a><a id="l-en" href="#">EN</a><a id="l-ja" href="#">日本語</a></span>'
+ '<script>(function(){var q=new URLSearchParams(location.search);["_x_tr_sl","_x_tr_tl","_x_tr_hl","_x_tr_pto"].forEach(function(k){q.delete(k)});var s=q.toString(),b=location.pathname+(s?"?"+s:""),t="https://news-solveralogistics-vn.translate.goog"+b+(s?"&":"?");'
+ 'document.getElementById("l-vi").href="https://news.solveralogistics.vn"+b;document.getElementById("l-en").href=t+"_x_tr_sl=vi&_x_tr_tl=en&_x_tr_hl=en";document.getElementById("l-ja").href=t+"_x_tr_sl=vi&_x_tr_tl=ja&_x_tr_hl=ja"})()</script>')
+
 def page(title, body, desc="", canonical="/"):
     t = html.escape(title)
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
@@ -47,7 +52,7 @@ def page(title, body, desc="", canonical="/"):
 <meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(desc)}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap"><style>{CSS}</style></head><body>
 <header><div class="bar"><a class="brand" href="/"><img src="/images/logo.png" alt="Solvera Logistics" style="height:40px;display:block"><span>Tin tức</span></a>
-<a class="back" href="{MAIN}">← Về website chính</a></div></header>
+{LANG}<a class="back" href="{MAIN}">← Về website chính</a></div></header>
 {body}
 <footer>© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</footer>
 </body></html>"""
@@ -62,7 +67,7 @@ def full_page(p):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
 <style>{p["page_css"]}</style>
 <style>.svtop{{background:#fff;color:#0a2a40;border-bottom:4px solid #0b7e93;font-family:'Be Vietnam Pro',sans-serif}}.svtop div{{max-width:1100px;margin:auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}}.svtop a{{color:#0a2a40;text-decoration:none}}.svtop .lg{{display:flex;align-items:center;gap:12px;font-weight:700}}.svtop img{{display:block;height:40px;width:auto}}.svtop b{{color:#ff8d1c}}.svtop .bk{{font-size:14px;border:1px solid #0b7e93;color:#0b7e93;padding:5px 12px;border-radius:6px}}.svfoot{{background:#061520;color:#cfd8e3;text-align:center;padding:22px 16px;font:14px 'Be Vietnam Pro',sans-serif;border-top:4px solid #ff8d1c}}.svfoot a{{color:#ff8d1c}}</style></head><body>
-<div class="svtop"><div><a href="/" class="lg"><img src="/images/logo.png" alt="Solvera Logistics" height="40"><span>Tin tức</span></a><a class="bk" href="{MAIN}">← Về website chính</a></div></div>
+<div class="svtop"><div><a href="/" class="lg"><img src="/images/logo.png" alt="Solvera Logistics" height="40"><span>Tin tức</span></a>{LANG}<a class="bk" href="{MAIN}">← Về website chính</a></div></div>
 {p["mast_html"]}
 <main class="wrap">{p["main_html"]}</main>
 <div class="svfoot">© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hà Nội</div>
