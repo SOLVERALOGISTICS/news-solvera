@@ -82,7 +82,9 @@ def trunc(x, n):
 
 def full_page(p):
     ci = {"Tin tức đầu tuần": 0, "Tin tức Nhật - Việt cuối tuần": 1, "Phân tích chuyên sâu": 2}.get(p["category"], 0)
-    bc = f'<nav class="bc"><a href="/">Trang chủ</a><i>›</i><a href="/#c{ci}">{html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
+    bcss = "<style>.bc{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 6px;font:600 14px 'Be Vietnam Pro',sans-serif;color:#6b7a8a}.bc a{color:#0b7e93;text-decoration:none}.bc a.home{background:#0b7e93;color:#fff;padding:7px 14px;border-radius:999px}.bc a.home:hover{background:#0a2a40}.bc a.cat{border-bottom:2px solid #ff8d1c}.bc i{font-style:normal;color:#9fb0bb}.backbtn{display:inline-block;margin:28px 0 8px;padding:12px 20px;border:1.5px solid #0b7e93;border-radius:8px;color:#0b7e93;font-weight:700;text-decoration:none}.backbtn:hover{background:#0b7e93;color:#fff}</style>"
+    bc = bcss + f'<nav class="bc"><a class="home" href="/">← Trang chủ</a><i>›</i><a class="cat" href="/#c{ci}">{html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
+    mast = re.sub(r'(<div class="eyebrow">)[^<]*', lambda m: m.group(1) + "Solvera Logistics · " + html.escape(p["category"]), p["mast_html"], count=1)
     head = p["title"].split(":")[0] if ":" in p["title"] and len(p["title"].split(":")[0]) >= 25 else p["title"]
     t = html.escape(trunc(head, 44) + " | Solvera News")
     ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": trunc(p["title"], 110),
@@ -100,9 +102,8 @@ def full_page(p):
 <style>{p["page_css"]}</style>
 <style>.svtop{{background:#fff;color:#0a2a40;border-bottom:4px solid #0b7e93;font-family:'Be Vietnam Pro',sans-serif}}.svtop div{{max-width:1100px;margin:auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}}.svtop a{{color:#0a2a40;text-decoration:none}}.svtop .lg{{display:flex;align-items:center;gap:12px;font-weight:700}}.svtop img{{display:block;height:40px;width:auto}}.svtop b{{color:#ff8d1c}}.svtop .bk{{font-size:14px;border:1px solid #0b7e93;color:#0b7e93;padding:5px 12px;border-radius:6px}}.svfoot{{background:#061520;color:#cfd8e3;text-align:center;padding:22px 16px;font:14px 'Be Vietnam Pro',sans-serif;border-top:4px solid #ff8d1c}}.svfoot a{{color:#ff8d1c}}</style></head><body>
 <div class="svtop"><div><a href="/" class="lg"><img src="/images/logo.png" alt="Solvera Logistics" height="40"><span>News</span></a>{LANG}<a class="bk" href="{MAIN}">← Main website</a></div></div>
-{bc}
-{p["mast_html"]}
-<main class="wrap">{p["main_html"]}<a class="backbtn" href="/#c{ci}">← Quay lại {html.escape(p["category"])}</a></main>
+{mast}
+<main class="wrap">{bc}{p["main_html"]}<a class="backbtn" href="/#c{ci}">← Quay lại {html.escape(p["category"])}</a></main>
 <div class="svfoot">© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hanoi</div>
 </body></html>"""
 
