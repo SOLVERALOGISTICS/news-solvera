@@ -100,8 +100,8 @@ def main():
     (OUT / "CNAME").write_text(DOMAIN)
     (OUT / ".nojekyll").write_text("")
 
-    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức trade lane Nhật - Việt": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg"}
-    CATS = ["Tin tức đầu tuần", "Tin tức trade lane Nhật - Việt", "Phân tích chuyên sâu"]
+    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức Nhật - Việt cuối tuần": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg"}
+    CATS = ["Tin tức đầu tuần", "Tin tức Nhật - Việt cuối tuần", "Phân tích chuyên sâu"]
     def card(p, big=False):
         im = p.get("image") or TH.get(p["category"], "/images/og.png")
         y, m, d_ = p["date"].split("-")

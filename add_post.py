@@ -43,10 +43,10 @@ p = pathlib.Path("posts.json")
 posts = json.loads(p.read_text(encoding="utf8"))
 posts = [x for x in posts if x["slug"] != slug]
 def _norm(x):
-    for a, b in (("Bản tin tuần", "Tin tức đầu tuần"), ("Bản tin Tuần", "Tin tức đầu tuần"), ("Bản tin Nhật – Việt", "Tin tức trade lane Nhật - Việt"), ("Bản tin Nhật - Việt", "Tin tức trade lane Nhật - Việt")):
+    for a, b in (("Bản tin tuần", "Tin tức đầu tuần"), ("Bản tin Tuần", "Tin tức đầu tuần"), ("Bản tin Nhật – Việt", "Tin tức Nhật - Việt cuối tuần"), ("Bản tin Nhật - Việt", "Tin tức Nhật - Việt cuối tuần")):
         x = x.replace(a, b)
     return x
-cat = "Tin tức trade lane Nhật - Việt" if cat.startswith("Nhật") else _norm(cat)
+cat = "Tin tức Nhật - Việt cuối tuần" if cat.startswith("Nhật") else _norm(cat)
 title, mast = _norm(title), _norm(mast)
 posts.append(dict(slug=slug, date=date, category=cat, title=title, summary=summ, image=image,
                   body_html="", page_css=css, mast_html=mast, main_html=body))
