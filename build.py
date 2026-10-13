@@ -1,3 +1,4 @@
+import re
 #!/usr/bin/env python3
 """Sinh trang tin tĩnh cho news.solveralogistics.vn từ posts.json -> thư mục docs/"""
 import json, html, pathlib, shutil
@@ -32,6 +33,13 @@ article h2{color:var(--navy);margin-top:36px;font-size:24px}article h2 small{dis
 .note{font-size:14px;color:var(--mut)}.advice li{margin-bottom:8px}
 .date{display:inline-block;background:#0f3b57;color:var(--orange);font-weight:800;padding:2px 10px;border-radius:6px}
 footer{border-top:4px solid var(--orange)}
+.pn{max-width:1100px;margin:auto;padding:8px 20px 56px}.ph{margin:14px 0 18px}.ph h2{margin:0;font-size:26px;color:var(--navy)}.ph p{margin:2px 0 4px;color:var(--ink)}.ph span{font-size:13px;color:var(--mut)}
+.lt{display:flex;background:#fff;border:1px solid #e3ecef;border-left:5px solid var(--orange);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(10,42,64,.08)}.lt img{width:40%;object-fit:cover;min-height:250px}.lt .in{padding:24px 28px;flex:1}.lt:hover{box-shadow:0 6px 18px rgba(10,42,64,.18)}
+.bd{display:flex;gap:8px;align-items:center}.no{background:var(--navy);color:#fff;font-weight:800;font-size:13px;padding:3px 10px;border-radius:6px}.new{background:var(--orange);color:#fff;font-weight:800;font-size:12px;padding:3px 9px;border-radius:6px;letter-spacing:.05em}
+.lt h2{margin:10px 0 0;font-size:28px;color:var(--navy)}.sub{color:var(--mut);font-size:14px}.hl{margin-top:14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}.lt ul{margin:6px 0 0;padding-left:20px;color:var(--ink);font-size:15px}.lt li{margin-bottom:4px}.lt .more{display:inline-block;margin-top:12px}
+.oh{margin:30px 0 10px;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}.rows{background:#fff;border:1px solid #e3ecef;border-radius:12px;overflow:hidden}.rw{display:flex;align-items:center;gap:16px;padding:16px 20px;border-top:1px solid #eef2f4}.rw:first-child{border-top:0}.rw:hover{background:var(--surface)}.rw .no{background:#e6eef2;color:var(--navy)}.rw .pr{flex:1;display:flex;flex-direction:column}.rw b{color:var(--navy)}.rw em{font-style:normal;color:var(--mut);font-size:14px}.rw .more{margin:0;white-space:nowrap}
+@media(max-width:700px){.lt{flex-direction:column}.lt img{width:100%;min-height:0;height:170px}.lt .in{padding:18px}.lt h2{font-size:22px}.tabs{overflow-x:auto;flex-wrap:nowrap}.tab{white-space:nowrap}}
+
 .hero2{background:linear-gradient(135deg,#0a2a40 0%,#0f4a63 100%);color:#fff;border-bottom:4px solid var(--orange)}.hero2 .hw{max-width:1100px;margin:auto;padding:40px 20px 36px}.hero2 .eb{color:var(--orange);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px}.hero2 h1{margin:6px 0 8px;font-size:clamp(28px,5vw,42px);line-height:1.15;font-weight:800;color:#fff}.hero2 p{margin:0;color:#c8dde5;font-size:17px;max-width:640px}
 .tabs{max-width:1100px;margin:22px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap}.tab{font:600 14px 'Be Vietnam Pro',sans-serif;border:1.5px solid #cfdde3;background:#fff;color:var(--navy);border-radius:999px;padding:8px 16px;cursor:pointer}.tab i{font-style:normal;color:var(--teal);margin-left:4px}.tab.on{background:var(--navy);border-color:var(--navy);color:#fff}.tab.on i{color:var(--orange)}
 .grid2{max-width:1100px;margin:auto;padding:20px 20px 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}.grid2 .card.big{grid-column:1/-1;flex-direction:row}.grid2 .card.big img{width:46%;height:auto;min-height:260px}.grid2 .card.big .in{padding:26px 28px;display:flex;flex-direction:column;justify-content:center}.grid2 .card.big h2{font-size:26px}
@@ -101,21 +109,37 @@ def main():
     (OUT / ".nojekyll").write_text("")
 
     TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức Nhật - Việt cuối tuần": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg"}
-    CATS = ["Tin tức đầu tuần", "Tin tức Nhật - Việt cuối tuần", "Phân tích chuyên sâu"]
-    def card(p, big=False):
-        im = p.get("image") or TH.get(p["category"], "/images/og.png")
+    INFO = {"Tin tức đầu tuần": ("Hàng hải · Hàng không · Xuất nhập khẩu", "Phát hành sáng thứ Hai hằng tuần"),
+            "Tin tức Nhật - Việt cuối tuần": ("Vận tải · Logistics · Chuỗi cung ứng tuyến Nhật – Việt", "Phát hành sáng thứ Bảy hằng tuần"),
+            "Phân tích chuyên sâu": ("Góc nhìn chuyên gia Solvera Logistics", "Cập nhật theo chủ đề")}
+    CATS = list(INFO)
+    def meta(p, n):
+        pr = re.search(r"\d{2}[–-]\d{2}/\d{2}/\d{4}|\d{2}/\d{2}/\d{4}", p["title"])
         y, m, d_ = p["date"].split("-")
-        return (f'<a class="card{" big" if big else ""}" data-cat="{html.escape(p["category"])}" href="/{p["slug"]}/"><img src="{html.escape(im)}" alt="{html.escape(p["category"])}" loading="lazy"><div class="in">'
-                f'<span class="tag">{html.escape(p["category"])}</span><h2>{html.escape(p["title"])}</h2><p>{html.escape(p["summary"])}</p>'
-                f'<div class="foot"><span class="dt">{d_}/{m}/{y}</span><span class="more">Đọc tiếp →</span></div></div></a>')
-    posts_sorted = sorted(posts, key=lambda x: x["date"], reverse=True)
-    cnt = {c: sum(1 for p in posts if p["category"] == c) for c in CATS}
-    tabs = '<button class="tab on" data-f="all">Tất cả <i>%d</i></button>' % len(posts) + "".join(f'<button class="tab" data-f="{html.escape(c)}">{html.escape(c)} <i>{cnt[c]}</i></button>' for c in CATS)
-    empty = '<div class="empty" data-cat="Phân tích chuyên sâu"><b>Phân tích chuyên sâu</b><p>Chuyên mục sắp ra mắt: các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng.</p></div>' if not cnt["Phân tích chuyên sâu"] else ""
-    cards = "".join(card(p, i == 0) for i, p in enumerate(posts_sorted))
-    js = '<script>document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");var f=t.dataset.f;document.querySelectorAll("[data-cat]").forEach(function(c){c.style.display=(f=="all"||c.dataset.cat==f)?"":"none"});var any=0;document.querySelectorAll(".card").forEach(function(c){if(c.style.display!="none")any++});}})</script>'
+        hs = [html.unescape(re.sub("<[^>]+>", "", h)) for h in re.findall(r"<h3>(.*?)</h3>", p.get("main_html", ""), re.S)]
+        return dict(n=n, period=pr.group(0) if pr else f"{d_}/{m}/{y}", date=f"{d_}/{m}/{y}", hs=hs[:3] or [p["summary"]])
+    def latest(p, mt):
+        im = p.get("image") or TH.get(p["category"], "/images/og.png")
+        li = "".join(f"<li>{html.escape(h)}</li>" for h in mt["hs"])
+        return (f'<a class="lt" href="/{p["slug"]}/"><img src="{html.escape(im)}" alt="" loading="lazy"><div class="in"><div class="bd"><span class="no">Số {mt["n"]:02d}</span><span class="new">MỚI NHẤT</span></div>'
+                f'<h2>Kỳ {mt["period"]}</h2><div class="sub">Phát hành {mt["date"]}</div><div class="hl">Tin chính</div><ul>{li}</ul><span class="more">Đọc bản tin →</span></div></a>')
+    def row(p, mt):
+        return (f'<a class="rw" href="/{p["slug"]}/"><span class="no">Số {mt["n"]:02d}</span><span class="pr"><b>Kỳ {mt["period"]}</b><em>{html.escape(mt["hs"][0])}</em></span><span class="more">Đọc →</span></a>')
+    panels = ""; tabs = ""
+    for k, c in enumerate(CATS):
+        ps = sorted([p for p in posts if p["category"] == c], key=lambda x: x["date"])
+        mts = {p["slug"]: meta(p, n + 1) for n, p in enumerate(ps)}
+        ps = ps[::-1]
+        tabs += f'<button class="tab{" on" if k == 0 else ""}" data-f="{k}">{html.escape(c)}</button>'
+        head = f'<div class="ph"><h2>{html.escape(c)}</h2><p>{INFO[c][0]}</p><span>{INFO[c][1]} · {len(ps)} số đã phát hành</span></div>'
+        if ps:
+            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các số trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
+        else:
+            body = '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
+        panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
+    js = '<script>document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+t.dataset.f})}})</script>'
     idx = (f'<div class="hero2"><div class="hw"><div class="eb">Solvera Logistics</div><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div></div>'
-           f'<div class="tabs">{tabs}</div><div class="grid2">{cards}{empty}</div>{js}')
+           f'<div class="tabs">{tabs}</div><div class="pn">{panels}</div>{js}')
     (OUT / "index.html").write_text(page(SITE, idx, "Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu"), encoding="utf-8")
 
     for p in posts:
