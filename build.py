@@ -81,7 +81,7 @@ def trunc(x, n):
     return x if len(x) <= n else x[:n-1].rsplit(" ", 1)[0].rstrip(",;:–-") + "…"
 
 def full_page(p):
-    ci = {"Tin tức đầu tuần": 0, "Tin tức Nhật - Việt cuối tuần": 1, "Phân tích chuyên sâu": 2}.get(p["category"], 0)
+    ci = {"Tin tức đầu tuần": 0, "Tin tức Nhật - Việt cuối tuần": 1, "Phân tích chuyên sâu": 2, "Hoạt động Solvera": 3}.get(p["category"], 0)
     bcss = "<style>.bc{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 6px;font:600 14px 'Be Vietnam Pro',sans-serif;color:#6b7a8a}.bc a{color:#0b7e93;text-decoration:none}.bc a.home,.bc a.cat{background:#0b7e93;color:#fff;padding:7px 14px;border-radius:999px}.bc a.home:hover,.bc a.cat:hover{background:#0a2a40}.bc i{font-style:normal;color:#9fb0bb}.backbtn{display:inline-block;margin:28px 0 8px;padding:12px 20px;border:1.5px solid #0b7e93;border-radius:8px;color:#0b7e93;font-weight:700;text-decoration:none}.backbtn:hover{background:#0b7e93;color:#fff}</style>"
     bc = bcss + f'<nav class="bc"><a class="home" href="/">← Trang chủ</a><i>›</i><a class="cat" href="/#c{ci}">{html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
     mast = re.sub(r'(<div class="eyebrow">)[^<]*', lambda m: m.group(1) + "Solvera Logistics · " + html.escape(p["category"]), p["mast_html"], count=1)
@@ -116,10 +116,11 @@ def main():
     (OUT / "CNAME").write_text(DOMAIN)
     (OUT / ".nojekyll").write_text("")
 
-    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức Nhật - Việt cuối tuần": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg"}
+    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức Nhật - Việt cuối tuần": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg", "Hoạt động Solvera": "/images/thumb-hoatdong.jpg"}
     INFO = {"Tin tức đầu tuần": ("Hàng hải · Hàng không · Xuất nhập khẩu", "Phát hành sáng thứ Hai hằng tuần"),
             "Tin tức Nhật - Việt cuối tuần": ("Vận tải · Logistics · Chuỗi cung ứng tuyến Nhật – Việt", "Phát hành sáng thứ Bảy hằng tuần"),
-            "Phân tích chuyên sâu": ("Góc nhìn chuyên gia Solvera Logistics", "Cập nhật theo chủ đề")}
+            "Phân tích chuyên sâu": ("Góc nhìn chuyên gia Solvera Logistics", "Cập nhật theo chủ đề"),
+            "Hoạt động Solvera": ("Sự kiện · Đối tác · Hoạt động của Solvera Logistics", "Cập nhật khi có hoạt động mới")}
     CATS = list(INFO)
     def meta(p, n):
         pr = re.search(r"\d{2}[–-]\d{2}/\d{2}/\d{4}|\d{2}/\d{2}/\d{4}", p["title"])
@@ -143,7 +144,7 @@ def main():
         if ps:
             body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các số trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
         else:
-            body = '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
+            body = ('<div class="empty"><b>Sắp ra mắt</b><p>Hình ảnh, sự kiện và hoạt động của Solvera Logistics sẽ được cập nhật tại đây.</p></div>' if c=='Hoạt động Solvera' else '') or '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
         panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
     js = '<script>function sel(k){document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("on",x.dataset.f==k)});document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+k})}var m=location.hash.match(/#c(\\d)/);if(m)sel(m[1]);document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+t.dataset.f})}})</script>'
     idx = (f'<div class="hero2"><div class="hw"><div class="eb">Solvera Logistics</div><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div></div>'
