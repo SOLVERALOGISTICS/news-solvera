@@ -146,7 +146,7 @@ def main():
         tabs += f'<span role="tab" tabindex="0" class="tab{" on" if k == 0 else ""}" data-f="{k}">{html.escape(c)}</span>'
         head = f'<div class="ph"><h2>{html.escape(c)}</h2><p>{INFO[c][0]}</p><span>{INFO[c][1]} · {len(ps)} {"bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics") else "số"} đã phát hành</span></div>'
         if ps:
-            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các {"bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics") else "số"} trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
+            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các ' + ("bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics") else "số") + ' trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
         else:
             body = ('<div class="empty"><b>Sắp ra mắt</b><p>Hình ảnh, sự kiện và hoạt động của Solvera Logistics sẽ được cập nhật tại đây.</p></div>' if c=='Hoạt động Solvera Logistics' else '') or '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
         panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
