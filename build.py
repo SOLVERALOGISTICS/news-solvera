@@ -33,6 +33,8 @@ article h2{color:var(--navy);margin-top:36px;font-size:24px}article h2 small{dis
 .note{font-size:14px;color:var(--mut)}.advice li{margin-bottom:8px}
 .date{display:inline-block;background:#0f3b57;color:var(--orange);font-weight:800;padding:2px 10px;border-radius:6px}
 footer{border-top:4px solid var(--orange)}
+.bc{max-width:1100px;margin:0 auto;padding:12px 20px;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--mut)}.bc a{color:var(--teal);font-weight:600}.bc a:hover{text-decoration:underline}.bc i{font-style:normal}.backbtn{display:inline-block;margin:28px 0 8px;padding:12px 20px;border:1.5px solid var(--teal);border-radius:8px;color:var(--teal);font-weight:700}.backbtn:hover{background:var(--teal);color:#fff}
+
 .pn{max-width:1100px;margin:auto;padding:8px 20px 56px}.ph{margin:14px 0 18px}.ph h2{margin:0;font-size:26px;color:var(--navy)}.ph p{margin:2px 0 4px;color:var(--ink)}.ph span{font-size:13px;color:var(--mut)}
 .lt{display:flex;background:#fff;border:1px solid #e3ecef;border-left:5px solid var(--orange);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(10,42,64,.08)}.lt img{width:40%;object-fit:cover;min-height:250px}.lt .in{padding:24px 28px;flex:1}.lt:hover{box-shadow:0 6px 18px rgba(10,42,64,.18)}
 .bd{display:flex;gap:8px;align-items:center}.no{background:var(--navy);color:#fff;font-weight:800;font-size:13px;padding:3px 10px;border-radius:6px}.new{background:var(--orange);color:#fff;font-weight:800;font-size:12px;padding:3px 9px;border-radius:6px;letter-spacing:.05em}
@@ -77,6 +79,8 @@ def trunc(x, n):
     return x if len(x) <= n else x[:n-1].rsplit(" ", 1)[0].rstrip(",;:–-") + "…"
 
 def full_page(p):
+    ci = {"Tin tức đầu tuần": 0, "Tin tức Nhật - Việt cuối tuần": 1, "Phân tích chuyên sâu": 2}.get(p["category"], 0)
+    bc = f'<nav class="bc"><a href="/">Trang chủ</a><i>›</i><a href="/#c{ci}">{html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
     head = p["title"].split(":")[0] if ":" in p["title"] and len(p["title"].split(":")[0]) >= 25 else p["title"]
     t = html.escape(trunc(head, 44) + " | Solvera News")
     ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": trunc(p["title"], 110),
@@ -94,8 +98,9 @@ def full_page(p):
 <style>{p["page_css"]}</style>
 <style>.svtop{{background:#fff;color:#0a2a40;border-bottom:4px solid #0b7e93;font-family:'Be Vietnam Pro',sans-serif}}.svtop div{{max-width:1100px;margin:auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}}.svtop a{{color:#0a2a40;text-decoration:none}}.svtop .lg{{display:flex;align-items:center;gap:12px;font-weight:700}}.svtop img{{display:block;height:40px;width:auto}}.svtop b{{color:#ff8d1c}}.svtop .bk{{font-size:14px;border:1px solid #0b7e93;color:#0b7e93;padding:5px 12px;border-radius:6px}}.svfoot{{background:#061520;color:#cfd8e3;text-align:center;padding:22px 16px;font:14px 'Be Vietnam Pro',sans-serif;border-top:4px solid #ff8d1c}}.svfoot a{{color:#ff8d1c}}</style></head><body>
 <div class="svtop"><div><a href="/" class="lg"><img src="/images/logo.png" alt="Solvera Logistics" height="40"><span>News</span></a>{LANG}<a class="bk" href="{MAIN}">← Main website</a></div></div>
+{bc}
 {p["mast_html"]}
-<main class="wrap">{p["main_html"]}</main>
+<main class="wrap">{p["main_html"]}<a class="backbtn" href="/#c{ci}">← Quay lại {html.escape(p["category"])}</a></main>
 <div class="svfoot">© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hanoi</div>
 </body></html>"""
 
@@ -137,7 +142,7 @@ def main():
         else:
             body = '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
         panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
-    js = '<script>document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+t.dataset.f})}})</script>'
+    js = '<script>function sel(k){document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("on",x.dataset.f==k)});document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+k})}var m=location.hash.match(/#c(\\d)/);if(m)sel(m[1]);document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+t.dataset.f})}})</script>'
     idx = (f'<div class="hero2"><div class="hw"><div class="eb">Solvera Logistics</div><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div></div>'
            f'<div class="tabs">{tabs}</div><div class="pn">{panels}</div>{js}')
     (OUT / "index.html").write_text(page(SITE, idx, "Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu"), encoding="utf-8")
