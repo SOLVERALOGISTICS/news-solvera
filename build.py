@@ -57,11 +57,22 @@ def page(title, body, desc="", canonical="/"):
 <footer>© Solvera Logistics Co., Ltd · <a href="{MAIN}">solveralogistics.vn</a> · Hanoi</footer>
 </body></html>"""
 
+def trunc(x, n):
+    x = x.strip()
+    return x if len(x) <= n else x[:n-1].rsplit(" ", 1)[0].rstrip(",;:–-") + "…"
+
 def full_page(p):
-    t = html.escape(p["title"] + " | " + SITE)
+    head = p["title"].split(":")[0] if ":" in p["title"] and len(p["title"].split(":")[0]) >= 25 else p["title"]
+    t = html.escape(trunc(head, 44) + " | Solvera News")
+    ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": trunc(p["title"], 110),
+        "datePublished": p["date"], "dateModified": p["date"], "inLanguage": "vi",
+        "description": trunc(p["summary"], 155), "image": ["https://news.solveralogistics.vn/images/og.png"],
+        "mainEntityOfPage": f"https://{DOMAIN}/{p['slug']}/",
+        "author": {"@type": "Organization", "name": "Solvera Logistics"},
+        "publisher": {"@type": "Organization", "name": "Solvera Logistics", "logo": {"@type": "ImageObject", "url": "https://news.solveralogistics.vn/images/logo.png"}}}, ensure_ascii=False)
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{t}</title><meta name="description" content="{html.escape(p["summary"])}">
+<title>{t}</title><meta name="description" content="{html.escape(trunc(p["summary"], 155))}"><script type="application/ld+json">{ld}</script>
 <link rel="canonical" href="https://{DOMAIN}/{p["slug"]}/">
 <meta property="og:image" content="https://news.solveralogistics.vn/images/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(p["summary"])}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
