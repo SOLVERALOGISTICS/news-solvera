@@ -32,6 +32,13 @@ article h2{color:var(--navy);margin-top:36px;font-size:24px}article h2 small{dis
 .note{font-size:14px;color:var(--mut)}.advice li{margin-bottom:8px}
 .date{display:inline-block;background:#0f3b57;color:var(--orange);font-weight:800;padding:2px 10px;border-radius:6px}
 footer{border-top:4px solid var(--orange)}
+.hero2{background:linear-gradient(135deg,#0a2a40 0%,#0f4a63 100%);color:#fff;border-bottom:4px solid var(--orange)}.hero2 .hw{max-width:1100px;margin:auto;padding:40px 20px 36px}.hero2 .eb{color:var(--orange);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px}.hero2 h1{margin:6px 0 8px;font-size:clamp(28px,5vw,42px);line-height:1.15;font-weight:800;color:#fff}.hero2 p{margin:0;color:#c8dde5;font-size:17px;max-width:640px}
+.tabs{max-width:1100px;margin:22px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap}.tab{font:600 14px 'Be Vietnam Pro',sans-serif;border:1.5px solid #cfdde3;background:#fff;color:var(--navy);border-radius:999px;padding:8px 16px;cursor:pointer}.tab i{font-style:normal;color:var(--teal);margin-left:4px}.tab.on{background:var(--navy);border-color:var(--navy);color:#fff}.tab.on i{color:var(--orange)}
+.grid2{max-width:1100px;margin:auto;padding:20px 20px 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}.grid2 .card.big{grid-column:1/-1;flex-direction:row}.grid2 .card.big img{width:46%;height:auto;min-height:260px}.grid2 .card.big .in{padding:26px 28px;display:flex;flex-direction:column;justify-content:center}.grid2 .card.big h2{font-size:26px}
+.grid2 .card{display:flex;flex-direction:column;border:1px solid #e3ecef;box-shadow:0 1px 3px rgba(10,42,64,.06)}.grid2 .card img{height:180px;width:100%;object-fit:cover}.grid2 .card h2{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.grid2 .card p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.grid2 .card .in{flex:1;display:flex;flex-direction:column}.foot{margin-top:auto;padding-top:14px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eef2f4}.dt{font-size:13px;color:var(--mut)}.foot .more{margin:0}
+.grid2 .tag{align-self:flex-start}.empty{grid-column:1/-1;border:2px dashed #b9d3db;border-radius:12px;background:#fff;padding:28px;text-align:center;color:var(--mut)}.empty b{display:block;color:var(--navy);font-size:20px;margin-bottom:6px}
+@media(max-width:700px){.grid2 .card.big{flex-direction:column}.grid2 .card.big img{width:100%;min-height:0;height:190px}.grid2 .card.big h2{font-size:20px}.grid2 .card.big .in{padding:16px}}
+
 .mast{background:var(--navy);color:#fff;padding:30px 20px 32px}.mast .w{max-width:780px;margin:auto}.eyebrow{color:var(--orange);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:13px}.mast h1{font-size:clamp(28px,6vw,42px);line-height:1.15;margin:8px 0;font-weight:800;color:#fff}.mast p{margin:0;color:#c8dde5}.mast .date{margin-top:14px}
 nav.jump{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0}nav.jump a{color:var(--teal);border:1px solid #d5e4e9;padding:4px 12px;border-radius:999px;font-size:14px;font-weight:600;background:#fff}
 article{background:#fff;max-width:780px;margin:0 auto;padding:8px 20px 56px}article h1{display:none}article>.tag:first-child,article>.date:first-of-type{display:none}.src a{color:#0a6d80!important;text-decoration:underline!important}
@@ -93,12 +100,22 @@ def main():
     (OUT / "CNAME").write_text(DOMAIN)
     (OUT / ".nojekyll").write_text("")
 
-    cards = []
-    for p in posts:
-        img = f'<img src="{html.escape(p.get("image",""))}" alt="" loading="lazy">' if p.get("image") else ''
-        cards.append(f'<a class="card" href="/{p["slug"]}/">{img}<div class="in"><span class="tag">{html.escape(p["category"])}</span>'
-                     f'<h2>{html.escape(p["title"])}</h2><p>{html.escape(p["summary"])}</p><div class="date">{p["date"]}</div><span class="more">Đọc tiếp →</span></div></a>')
-    idx = f'<div class="hero"><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div><div class="grid">{"".join(cards)}</div>'
+    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức trade lane Nhật - Việt": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg"}
+    CATS = ["Tin tức đầu tuần", "Tin tức trade lane Nhật - Việt", "Phân tích chuyên sâu"]
+    def card(p, big=False):
+        im = p.get("image") or TH.get(p["category"], "/images/og.png")
+        y, m, d_ = p["date"].split("-")
+        return (f'<a class="card{" big" if big else ""}" data-cat="{html.escape(p["category"])}" href="/{p["slug"]}/"><img src="{html.escape(im)}" alt="{html.escape(p["category"])}" loading="lazy"><div class="in">'
+                f'<span class="tag">{html.escape(p["category"])}</span><h2>{html.escape(p["title"])}</h2><p>{html.escape(p["summary"])}</p>'
+                f'<div class="foot"><span class="dt">{d_}/{m}/{y}</span><span class="more">Đọc tiếp →</span></div></div></a>')
+    posts_sorted = sorted(posts, key=lambda x: x["date"], reverse=True)
+    cnt = {c: sum(1 for p in posts if p["category"] == c) for c in CATS}
+    tabs = '<button class="tab on" data-f="all">Tất cả <i>%d</i></button>' % len(posts) + "".join(f'<button class="tab" data-f="{html.escape(c)}">{html.escape(c)} <i>{cnt[c]}</i></button>' for c in CATS)
+    empty = '<div class="empty" data-cat="Phân tích chuyên sâu"><b>Phân tích chuyên sâu</b><p>Chuyên mục sắp ra mắt: các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng.</p></div>' if not cnt["Phân tích chuyên sâu"] else ""
+    cards = "".join(card(p, i == 0) for i, p in enumerate(posts_sorted))
+    js = '<script>document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");var f=t.dataset.f;document.querySelectorAll("[data-cat]").forEach(function(c){c.style.display=(f=="all"||c.dataset.cat==f)?"":"none"});var any=0;document.querySelectorAll(".card").forEach(function(c){if(c.style.display!="none")any++});}})</script>'
+    idx = (f'<div class="hero2"><div class="hw"><div class="eb">Solvera Logistics</div><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div></div>'
+           f'<div class="tabs">{tabs}</div><div class="grid2">{cards}{empty}</div>{js}')
     (OUT / "index.html").write_text(page(SITE, idx, "Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu"), encoding="utf-8")
 
     for p in posts:
