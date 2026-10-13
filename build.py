@@ -126,25 +126,29 @@ def main():
         pr = re.search(r"\d{2}[–-]\d{2}/\d{2}/\d{4}|\d{2}/\d{2}/\d{4}", p["title"])
         y, m, d_ = p["date"].split("-")
         hs = [html.unescape(re.sub("<[^>]+>", "", h)) for h in re.findall(r"<h3>(.*?)</h3>", p.get("main_html", ""), re.S)]
-        return dict(n=n, period=pr.group(0) if pr else f"{d_}/{m}/{y}", date=f"{d_}/{m}/{y}", hs=hs[:3] or [p["summary"]])
+        tp = p.get("topic")
+        if tp:
+            h2 = [html.unescape(re.sub("<[^>]+>", "", re.sub("<small>.*?</small>", "", h))) for h in re.findall(r"<h2[^>]*>(.*?)</h2>", p.get("main_html", ""), re.S)]
+            hs = [h for h in h2 if not h.startswith("Điểm cần nhớ")][:3] or hs
+        return dict(topic=tp, n=n, period=pr.group(0) if pr else f"{d_}/{m}/{y}", date=f"{d_}/{m}/{y}", hs=hs[:3] or [p["summary"]])
     def latest(p, mt):
         im = p.get("image") or TH.get(p["category"], "/images/og.png")
         li = "".join(f"<li>{html.escape(h)}</li>" for h in mt["hs"])
         return (f'<a class="lt" href="/{p["slug"]}/"><img src="{html.escape(im)}" alt="" loading="lazy"><div class="in"><div class="bd"><span class="no">Số {mt["n"]:02d}</span><span class="new">MỚI NHẤT</span></div>'
-                f'<h2>Kỳ {mt["period"]}</h2><div class="sub">Phát hành {mt["date"]}</div><div class="hl">Tin chính</div><ul>{li}</ul><span class="more">Đọc bản tin →</span></div></a>')
+                f'<h2>{html.escape(mt["topic"]) if mt["topic"] else "Kỳ " + mt["period"]}</h2><div class="sub">Phát hành {mt["date"]}</div><div class="hl">{"Nội dung chính" if mt["topic"] else "Tin chính"}</div><ul>{li}</ul><span class="more">{"Đọc bài" if mt["topic"] else "Đọc bản tin"} →</span></div></a>')
     def row(p, mt):
-        return (f'<a class="rw" href="/{p["slug"]}/"><span class="no">Số {mt["n"]:02d}</span><span class="pr"><b>Kỳ {mt["period"]}</b><em>{html.escape(mt["hs"][0])}</em></span><span class="more">Đọc →</span></a>')
+        return (f'<a class="rw" href="/{p["slug"]}/"><span class="no">Số {mt["n"]:02d}</span><span class="pr"><b>{html.escape(mt["topic"]) if mt["topic"] else "Kỳ " + mt["period"]}</b><em>{html.escape(mt["hs"][0])}</em></span><span class="more">Đọc →</span></a>')
     panels = ""; tabs = ""
     for k, c in enumerate(CATS):
         ps = sorted([p for p in posts if p["category"] == c], key=lambda x: x["date"])
         mts = {p["slug"]: meta(p, n + 1) for n, p in enumerate(ps)}
         ps = ps[::-1]
         tabs += f'<span role="tab" tabindex="0" class="tab{" on" if k == 0 else ""}" data-f="{k}">{html.escape(c)}</span>'
-        head = f'<div class="ph"><h2>{html.escape(c)}</h2><p>{INFO[c][0]}</p><span>{INFO[c][1]} · {len(ps)} số đã phát hành</span></div>'
+        head = f'<div class="ph"><h2>{html.escape(c)}</h2><p>{INFO[c][0]}</p><span>{INFO[c][1]} · {len(ps)} {"bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics") else "số"} đã phát hành</span></div>'
         if ps:
-            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các số trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
+            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các {"bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics") else "số"} trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
         else:
-            body = ('<div class="empty"><b>Sắp ra mắt</b><p>Hình ảnh, sự kiện và hoạt động của Solvera Logistics sẽ được cập nhật tại đây.</p></div>' if c=='Hoạt động Solvera' else '') or '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
+            body = ('<div class="empty"><b>Sắp ra mắt</b><p>Hình ảnh, sự kiện và hoạt động của Solvera Logistics sẽ được cập nhật tại đây.</p></div>' if c=='Hoạt động Solvera Logistics' else '') or '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
         panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
     js = '<script>function sel(k){document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("on",x.dataset.f==k)});document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+k})}var m=location.hash.match(/#c(\\d)/);if(m)sel(m[1]);document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+t.dataset.f})}})</script>'
     idx = (f'<div class="hero2"><div class="hw"><div class="eb">Solvera Logistics</div><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div></div>'
