@@ -83,7 +83,7 @@ def trunc(x, n):
 def full_page(p):
     ci = {"Tin tức đầu tuần": 0, "Tin tức Nhật - Việt cuối tuần": 1, "Phân tích chuyên sâu": 2, "Hoạt động Solvera Logistics": 3}.get(p["category"], 0)
     bcss = "<style>.bc{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 6px;font:600 14px 'Be Vietnam Pro',sans-serif;color:#6b7a8a}.bc a{color:#0b7e93;text-decoration:none}.bc a.home,.bc a.cat{background:#0b7e93;color:#fff;padding:7px 14px;border-radius:999px}.bc a.home:hover,.bc a.cat:hover{background:#0a2a40}.bc i{font-style:normal;color:#9fb0bb}.backbtn{display:inline-block;margin:28px 0 8px;padding:12px 20px;border:1.5px solid #0b7e93;border-radius:8px;color:#0b7e93;font-weight:700;text-decoration:none}.backbtn:hover{background:#0b7e93;color:#fff}</style>"
-    bc = bcss + f'<nav class="bc"><a class="home" href="/">← Trang chủ</a><i>›</i><a class="cat" href="/#c{ci}">{html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
+    bc = bcss + f'<nav class="bc"><a class="home" href="/">← Trang chủ</a><i>›</i><a class="cat" href="/#c{ci}">← {html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
     mast = re.sub(r'(<div class="eyebrow">)[^<]*', lambda m: m.group(1) + "Solvera Logistics · " + html.escape(p["category"]), p["mast_html"], count=1)
     head = p["title"].split(":")[0] if ":" in p["title"] and len(p["title"].split(":")[0]) >= 25 else p["title"]
     t = html.escape(trunc(head, 44) + " | Solvera News")
