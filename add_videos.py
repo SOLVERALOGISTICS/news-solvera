@@ -4,7 +4,27 @@ Dùng: python3 add_videos.py videos.txt  (mỗi dòng: videoId|tiêu đề gốc
 Đã đăng (cùng videoId) thì bỏ qua -> không trùng. Ghi videos_done tự nhiên qua posts.json (slug video-<id>)."""
 import json, re, html, sys, datetime
 posts = json.load(open('posts.json'))
+desc = {}
+if len(sys.argv) > 2:
+    for blk in re.split(r'^@@', open(sys.argv[2], encoding='utf-8').read(), flags=re.M)[1:]:
+        h, _, t = blk.partition('\n'); i, d = h.split('|'); desc[i] = (d.strip(), t.strip())
+    posts = [p for p in posts if not (p['slug'].startswith('video-') and p['slug'][6:] in desc)]
 have = {p['slug'] for p in posts}
+BUL = ('🔸', '🔹', '📌', '▪️', '•')
+def render(t):
+    out = []; ul = []
+    def flush():
+        nonlocal ul
+        if ul: out.append('<ul>' + ''.join(f'<li>{x}</li>' for x in ul) + '</ul>'); ul = []
+    first = True
+    for ln in t.split('\n'):
+        ln = ln.strip()
+        if not ln: flush(); continue
+        e = html.escape(ln)
+        if first: out.append(f'<h2 id="noi-dung">{e}</h2>'); first = False
+        elif ln.startswith(BUL): ul.append(html.escape(ln.lstrip('🔸🔹📌▪️• ').strip()))
+        else: flush(); out.append(f'<p>{e}</p>')
+    flush(); return ''.join(out)
 ref = next(p for p in posts if p['slug'] == 'van-tai-hang-khong-duong-bien-viet-nhat')
 styles = ''.join(s for s in re.findall(r'<style>.*?</style>', ref['main_html'], flags=re.S) if '.goals' in s)
 contact = ref['main_html'][ref['main_html'].index('<section class="contact"'):]
@@ -25,15 +45,16 @@ for ln in open(sys.argv[1], encoding='utf-8'):
     img = f'https://i.ytimg.com/vi/{vid}/hqdefault.jpg'
     rel_posts = [p for p in posts if p['category'] == 'Phân tích chuyên sâu'][:3]
     rel = '<section class="rel"><h2 id="doc-tiep">Đọc tiếp</h2>' + ''.join(f'<a href="/{p["slug"]}/">{html.escape(p.get("topic") or p["title"])}<span>{html.escape(p["summary"])}</span></a>' for p in rel_posts) + '</section>'
+    dd, tx = desc.get(vid, (None, ''))
     body = (f'<p>Video địa chính trị «{e}» từ kênh YouTube Solvera Logistics.</p>'
             f'<div class="vid" id="v-{vid}" style="background-image:url({img})" role="button" aria-label="Phát video {e}"><button type="button" aria-label="Phát video">▶</button></div>'
             f'<script>document.getElementById("v-{vid}").addEventListener("click",function(){{this.innerHTML=\'<iframe src="https://www.youtube-nocookie.com/embed/{vid}?autoplay=1&rel=0" title="{e}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>\'}})</script>'
-            f'<div class="vnote"><strong>Xem thêm video địa chính trị:</strong> <a href="https://www.youtube.com/@SOLVERALOGISTICS" rel="noopener" target="_blank">kênh YouTube Solvera Logistics</a> · <a href="https://www.youtube.com/watch?v={vid}" rel="noopener" target="_blank">mở trên YouTube</a>.</div>')
-    d = datetime.date.today(); wd = ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy','Chủ Nhật'][d.weekday()]
+            + (render(tx) if tx else '') + f'<div class="vnote"><strong>Xem thêm video địa chính trị:</strong> <a href="https://www.youtube.com/@SOLVERALOGISTICS" rel="noopener" target="_blank">kênh YouTube Solvera Logistics</a> · <a href="https://www.youtube.com/watch?v={vid}" rel="noopener" target="_blank">mở trên YouTube</a>.</div>')
+    d = datetime.date.fromisoformat(dd) if dd else datetime.date.today(); wd = ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy','Chủ Nhật'][d.weekday()]
     mast = (f'<header class="mast"><div class="wrap">\n  <div class="eyebrow">Solvera Logistics · Video địa chính trị</div>\n  <h1>{e}</h1>\n'
             f'  <p>Video từ kênh YouTube Solvera Logistics.</p>\n  <span class="date">{wd}, {d.day:02d}/{d.month:02d}/{d.year}</span>\n</div></header>')
     posts.append({"slug": slug, "date": d.isoformat(), "category": "Video địa chính trị", "topic": title, "title": title,
-                  "summary": f'Video địa chính trị «{title}» từ kênh YouTube Solvera Logistics.'[:155], "image": img, "body_html": "",
+                  "summary": (re.sub(r'^\W+','',tx.split('\n')[0])[:152] if tx else f'Video địa chính trị «{title}» từ kênh YouTube Solvera Logistics.'[:155]), "image": img, "body_html": "",
                   "page_css": ref['page_css'], "mast_html": mast, "main_html": styles + vcss + body + rel + contact})
     new += 1
 json.dump(posts, open('posts.json', 'w'), ensure_ascii=False, indent=1)
