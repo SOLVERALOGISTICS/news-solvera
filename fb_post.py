@@ -7,7 +7,7 @@ p = next(x for x in P if x['slug'] == slug) if slug else sorted(P, key=lambda x:
 tx = lambda s: html.unescape(re.sub('<[^>]+>', '', s)).strip()
 h3 = [re.sub(r'^\d+\.\s*','',tx(h)) for h in re.findall(r'<h3>(.*?)</h3>', p['main_html'], re.S)][:5]
 url = f'https://news.solveralogistics.vn/{p["slug"]}/'
-cap = f'🔴 {tx(p["title"]).upper()}\n\n{tx(p["summary"])}\n\n' + ''.join(f'▪️ {h}\n' for h in h3) + f'\n👉 Đọc đầy đủ tại: {url}\n\n📞 Solvera Logistics – Hotline/Zalo: +84 913 034 407\n\n#Solvera #SolveraLogistics #BreakingNews #Logistics #HangHai #XuatNhapKhau #HaiQuan'
+cap = f'🔴 {tx(p["title"]).upper()}\n\n{tx(p["summary"])}\n\n' + ''.join(f'▪️ {h}\n' for h in h3) + f'\n👉 Đọc đầy đủ tại: {url}\n\n#Solvera #SolveraLogistics #BreakingNews #Logistics #HangHai #XuatNhapKhau #HaiQuan\n\n--------///---------\n\n📞 Contact Us:\n- Hotline: +84 913 034 407\n- Email: admin@solveralogistics.vn\n- Website: https://solveralogistics.vn\n\n🌐 Connect with us:\n- LinkedIn: https://www.linkedin.com/company/solvera-logistics/\n- YouTube: https://www.youtube.com/@SOLVERALOGISTICS\n- Facebook: https://www.facebook.com/share/1CQrtY27t4/?mibextid=wwXIfr\n- Zalo: https://zalo.me/2938397457262576692\n- TikTok: https://www.tiktok.com/@solveralogistics\n- News: https://news.solveralogistics.vn'
 os.makedirs('fb', exist_ok=True)
 open(f'fb/{p["slug"]}.txt', 'w').write(cap)
 im = Image.open(p['image']).convert('RGB'); W, H = 1200, 630
