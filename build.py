@@ -81,7 +81,7 @@ def trunc(x, n):
     return x if len(x) <= n else x[:n-1].rsplit(" ", 1)[0].rstrip(",;:–-") + "…"
 
 def full_page(p):
-    ci = {"Breaking News": 0, "Tin tức đầu tuần": 1, "Tin tức Nhật - Việt cuối tuần": 2, "Phân tích chuyên sâu": 3, "Hoạt động Solvera Logistics": 4}.get(p["category"], 0)
+    ci = {"Breaking News": 0, "Tin tức đầu tuần": 1, "Tin tức Nhật - Việt cuối tuần": 2, "Phân tích chuyên sâu": 3, "Video địa chính trị": 4, "Hoạt động Solvera Logistics": 5}.get(p["category"], 0)
     bcss = "<style>.bc{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 6px;font:600 14px 'Be Vietnam Pro',sans-serif;color:#6b7a8a}.bc a{color:#0b7e93;text-decoration:none}.bc a.home,.bc a.cat{background:#0b7e93;color:#fff;padding:7px 14px;border-radius:999px}.bc a.home:hover,.bc a.cat:hover{background:#0a2a40}.bc i{font-style:normal;color:#9fb0bb}.backbtn{display:inline-block;margin:28px 0 8px;padding:12px 20px;border:1.5px solid #0b7e93;border-radius:8px;color:#0b7e93;font-weight:700;text-decoration:none}.backbtn:hover{background:#0b7e93;color:#fff}</style>"
     bc = bcss + f'<nav class="bc"><a class="home" href="/">← Trang chủ</a><i>›</i><a class="cat" href="/#c{ci}">← {html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
     mast = re.sub(r'(<div class="eyebrow">)[^<]*', lambda m: m.group(1) + "Solvera Logistics · " + html.escape(p["category"]), p["mast_html"], count=1)
@@ -116,10 +116,11 @@ def main():
     (OUT / "CNAME").write_text(DOMAIN)
     (OUT / ".nojekyll").write_text("")
 
-    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức Nhật - Việt cuối tuần": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg", "Hoạt động Solvera Logistics": "/images/thumb-hoatdong.jpg", "Breaking News": "/images/thumb-tuan.jpg"}
+    TH = {"Tin tức đầu tuần": "/images/thumb-tuan.jpg", "Tin tức Nhật - Việt cuối tuần": "/images/thumb-nhatviet.jpg", "Phân tích chuyên sâu": "/images/thumb-phantich.jpg", "Hoạt động Solvera Logistics": "/images/thumb-hoatdong.jpg", "Breaking News": "/images/thumb-tuan.jpg", "Video địa chính trị": "/images/thumb-phantich.jpg"}
     INFO = {"Tin tức đầu tuần": ("Hàng hải · Hàng không · Xuất nhập khẩu", "Phát hành sáng thứ Hai hằng tuần"),
             "Tin tức Nhật - Việt cuối tuần": ("Vận tải · Logistics · Chuỗi cung ứng tuyến Nhật – Việt", "Phát hành sáng thứ Bảy hằng tuần"),
             "Phân tích chuyên sâu": ("Góc nhìn chuyên gia Solvera Logistics", "Cập nhật theo chủ đề"),
+            "Video địa chính trị": ("Địa chính trị · Hàng hải · Logistics · Video từ kênh YouTube Solvera", "Cập nhật khi có video mới"),
             "Hoạt động Solvera Logistics": ("Sự kiện · Đối tác · Hoạt động của Solvera Logistics", "Cập nhật khi có hoạt động mới"),
             "Breaking News": ("Tin nóng · Hàng hải · Hàng không · Xuất nhập khẩu", "Cập nhật hằng ngày khi có tin nóng")}
     CATS = ["Breaking News"] + [c for c in INFO if c not in ("Breaking News", "Hoạt động Solvera Logistics")] + ["Hoạt động Solvera Logistics"]  # Hoạt động luôn cuối; khối mới chèn trước nó
@@ -145,9 +146,9 @@ def main():
         mts = {p["slug"]: meta(p, n + 1) for n, p in enumerate(ps)}
         ps = ps[::-1]
         tabs += f'<span role="tab" tabindex="0" class="tab{" on" if k == 0 else ""}" data-f="{k}">{html.escape(c)}</span>'
-        head = f'<div class="ph"><h2>{html.escape(c)}</h2><p>{INFO[c][0]}</p><span>{INFO[c][1]} · {len(ps)} {"bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics","Breaking News") else "số"} đã phát hành</span></div>'
+        head = f'<div class="ph"><h2>{html.escape(c)}</h2><p>{INFO[c][0]}</p><span>{INFO[c][1]} · {len(ps)} {"video" if c=="Video địa chính trị" else "bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics","Breaking News","Video địa chính trị") else "số"} đã phát hành</span></div>'
         if ps:
-            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các ' + ("bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics","Breaking News") else "số") + ' trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
+            body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các ' + ("video" if c=="Video địa chính trị" else "bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics","Breaking News","Video địa chính trị") else "số") + ' trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
         else:
             body = ('<div class="empty"><b>Sắp ra mắt</b><p>Hình ảnh, sự kiện và hoạt động của Solvera Logistics sẽ được cập nhật tại đây.</p></div>' if c=='Hoạt động Solvera Logistics' else '<div class="empty"><b>Chưa có tin nóng</b><p>Các tin nóng của ngành hàng hải, hàng không và xuất nhập khẩu sẽ được cập nhật tại đây ngay khi có.</p></div>' if c=='Breaking News' else '') or '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
         panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
