@@ -22,4 +22,4 @@ fs = 60; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 24)
 while len(lines) > 3: fs -= 4; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 30)
 y = H-110-len(lines)*(fs+10)
 for ln in lines: d.text((50, y), ln, font=f, fill='white'); y += fs+10
-im.convert('RGB').save(f'fb/{p["slug"]}.jpg', quality=88); print('OK fb/' + p['slug'])
+im.convert('RGB').save(f'fb/{p["slug"]}.jpg', quality=88); im.convert('RGB').save(f'images/fb-{p["slug"]}.jpg', quality=88); print('OK fb/' + p['slug'])
