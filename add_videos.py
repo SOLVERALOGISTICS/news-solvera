@@ -53,7 +53,8 @@ for ln in open(sys.argv[1], encoding='utf-8'):
     d = datetime.date.fromisoformat(dd) if dd else datetime.date.today(); wd = ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy','Chủ Nhật'][d.weekday()]
     mast = (f'<header class="mast"><div class="wrap">\n  <div class="eyebrow">Solvera Logistics · Video địa chính trị</div>\n  <h1>{e}</h1>\n'
             f'  <p>Video từ kênh YouTube Solvera Logistics.</p>\n  <span class="date">{wd}, {d.day:02d}/{d.month:02d}/{d.year}</span>\n</div></header>')
-    posts.append({"slug": slug, "date": d.isoformat(), "category": "Video địa chính trị", "topic": title, "title": title,
+    lang = "vi" if re.search(r"[àáảãạăâđêôơưèéìíòóùúỳýẻẽẹ]", (title + tx).lower()) else "en"
+    posts.append({"lang": lang, "slug": slug, "date": d.isoformat(), "category": "Video địa chính trị", "topic": title, "title": title,
                   "summary": (re.sub(r'^\W+','',tx.split('\n')[0])[:152] if tx else f'Video địa chính trị «{title}» từ kênh YouTube Solvera Logistics.'[:155]), "image": img, "body_html": "",
                   "page_css": ref['page_css'], "mast_html": mast, "main_html": styles + vcss + body + rel + contact})
     new += 1

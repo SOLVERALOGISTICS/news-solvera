@@ -151,6 +151,12 @@ def main():
             body = latest(ps[0], mts[ps[0]["slug"]]) + ('<h3 class="oh">Các ' + ("video" if c=="Video địa chính trị" else "bài" if c in ("Phân tích chuyên sâu","Hoạt động Solvera Logistics","Breaking News","Video địa chính trị") else "số") + ' trước</h3><div class="rows">' + "".join(row(p, mts[p["slug"]]) for p in ps[1:]) + "</div>" if len(ps) > 1 else "")
         else:
             body = ('<div class="empty"><b>Sắp ra mắt</b><p>Hình ảnh, sự kiện và hoạt động của Solvera Logistics sẽ được cập nhật tại đây.</p></div>' if c=='Hoạt động Solvera Logistics' else '<div class="empty"><b>Chưa có tin nóng</b><p>Các tin nóng của ngành hàng hải, hàng không và xuất nhập khẩu sẽ được cập nhật tại đây ngay khi có.</p></div>' if c=='Breaking News' else '') or '<div class="empty"><b>Sắp ra mắt</b><p>Các bài phân tích chuyên gia của Solvera Logistics về hàng hải, hàng không, xuất nhập khẩu và chuỗi cung ứng sẽ được đăng tại đây.</p></div>'
+        if c == "Video địa chính trị" and any(p.get("lang") == "en" for p in ps):
+            def blk(lst, ttl):
+                if not lst: return ""
+                mm = {p["slug"]: meta(p, len(lst) - i) for i, p in enumerate(lst)}
+                return f'<h3 class="oh">{ttl}</h3>' + latest(lst[0], mm[lst[0]["slug"]]) + ('<div class="rows">' + "".join(row(p, mm[p["slug"]]) for p in lst[1:]) + "</div>" if len(lst) > 1 else "")
+            body = blk([p for p in ps if p.get("lang") != "en"], "🇻🇳 Video tiếng Việt") + blk([p for p in ps if p.get("lang") == "en"], "🇬🇧 English videos")
         panels += f'<section class="panel" id="p{k}"{"" if k == 0 else " hidden"}>{head}{body}</section>'
     js = '<script>function sel(k){document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("on",x.dataset.f==k)});document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+k})}var m=location.hash.match(/#c(\\d)/);if(m)sel(m[1]);document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});t.classList.add("on");document.querySelectorAll(".panel").forEach(function(p){p.hidden=p.id!="p"+t.dataset.f})}})</script>'
     idx = (f'<div class="hero2"><div class="hw"><div class="eb">Solvera Logistics</div><h1>{SITE}</h1><p>Tin tức hàng hải, hàng không, logistics, Supply Chain và kinh doanh xuất nhập khẩu.</p></div></div>'
