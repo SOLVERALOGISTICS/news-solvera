@@ -9,7 +9,7 @@ Trong body.html: dùng <p>, <h2>, <h3>, <ul><li>, <strong>. Ảnh chèn bằng d
 Script: nén ảnh -> images/<slug>-N.jpg, tạo mục lục từ h2, thêm CSS (chế độ tối OK), gợi ý đọc tiếp,
 khối liên hệ, mast; ghi vào posts.json (cùng slug thì thay thế). Sau đó chạy build.py.
 """
-import argparse, json, re, html, shutil, os, datetime
+import argparse, json, re, html, shutil, os, datetime, unicodedata
 from PIL import Image
 ap = argparse.ArgumentParser()
 ap.add_argument('--slug', required=True); ap.add_argument('--date', required=True)
@@ -34,10 +34,10 @@ def img(m):
 body = re.sub(r'\[\[IMG:(.*?)\]\]', img, body)
 toc = []
 def h2(m):
-    t = re.sub('<[^>]+>', '', m.group(2)); i = re.sub(r'[^a-z0-9]+', '-', t.lower().encode('ascii', 'ignore').decode()).strip('-') or f's{len(toc)+1}'
+    t = re.sub('<[^>]+>', '', m.group(2)); i = re.sub(r'[^a-z0-9]+', '-', unicodedata.normalize('NFKD', t.lower().replace('đ','d')).encode('ascii', 'ignore').decode()).strip('-')[:50].strip('-') or f's{len(toc)+1}'
     toc.append((i, t)); return f'<h2 id="{i}">{m.group(2)}</h2>'
 body = re.sub(r'<h2([^>]*)>(.*?)</h2>', h2, body, flags=re.S)
-nav = '<nav class="jump" aria-label="Mục lục">' + ''.join(f'<a href="#{i}">{html.escape(t)}</a>' for i, t in toc) + '</nav>' if len(toc) > 1 else ''
+nav = '<nav class="jump" aria-label="Mục lục">' + ''.join(f'<a href="#{i}">{html.escape(html.unescape(t))}</a>' for i, t in toc) + '</nav>' if len(toc) > 1 else ''
 posts = [p for p in posts if p['slug'] != a.slug]
 others = [p for p in sorted(posts, key=lambda x: x['date'], reverse=True) if p['category'] in ('Breaking News', 'Phân tích chuyên sâu')][:3]
 rel = '<section class="rel"><h2 id="doc-tiep">Đọc tiếp</h2>' + ''.join(f'<a href="/{p["slug"]}/">{html.escape(p.get("topic") or p["title"])}<span>{html.escape(p["summary"])}</span></a>' for p in others) + '</section>'
