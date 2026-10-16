@@ -16,7 +16,7 @@ for y in range(H):
     k = y/H; d.line([(0, y), (W, y)], fill=(int(10+8*k), int(42+14*k), int(64+20*k)))
 d.rectangle([0, 0, 14, H], fill=(224, 123, 32))
 lg = Image.open('images/logo.png').convert('RGBA'); lg.thumbnail((300, 110))
-bg = Image.new('RGBA', (lg.width+30, lg.height+24), (255, 255, 255, 255)); bg.paste(lg, (15, 12), lg); im.paste(bg.convert('RGB'), (50, 40))
+im.paste(lg, (46, 40), lg)
 F = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 d.rounded_rectangle([50, 200, 330, 256], 8, fill=(200, 30, 40)); d.text((72, 212), 'BREAKING NEWS', font=ImageFont.truetype(F, 28), fill='white')
 ttl = tx(p['title']); ttl = re.sub(r'^Tin nóng \d+/\d+:\s*', '', ttl).upper()
@@ -25,4 +25,4 @@ while len(lines) > 3: fs -= 4; f = ImageFont.truetype(F, fs); lines = textwrap.w
 y = 290
 for ln in lines: d.text((50, y), ln, font=f, fill='white'); y += fs+14
 d.text((50, H-60), 'news.solveralogistics.vn', font=ImageFont.truetype(F, 26), fill=(224, 123, 32))
-im.save(f'fb/{p["slug"]}.jpg', quality=90); im.save(f'images/fb-{p["slug"]}.jpg', quality=90); print('OK fb/' + p['slug'])
+im.save(f'fb/{p["slug"]}.jpg', quality=90); im.save(f'images/fb-{p["slug"]}.jpg', quality=90)

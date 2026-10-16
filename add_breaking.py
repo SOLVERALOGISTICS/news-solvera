@@ -49,7 +49,7 @@ main = styles + body.replace('@NAV@', '') + '' if False else None
 lead_split = re.search(r'</p>', body)
 if nav and lead_split: body = body[:lead_split.end()] + nav + body[lead_split.end():]
 main = styles + body + rel + contact
-cover = a.cover or first[0] or 'images/thumb-tuan.jpg'
+cover = a.cover or first[0] or f'images/fb-{a.slug}.jpg'
 if a.cover and os.path.exists(a.cover):
     out = f'images/{a.slug}-cover.jpg'; im = Image.open(a.cover).convert('RGB'); im.thumbnail((1400, 1400)); im.save(out, quality=82, optimize=True); cover = out
 posts.insert(0, {"slug": a.slug, "date": a.date, "category": "Breaking News", "topic": a.title, "title": a.title, "summary": a.summary,
