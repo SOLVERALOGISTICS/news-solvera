@@ -10,16 +10,19 @@ url = f'https://news.solveralogistics.vn/{p["slug"]}/'
 cap = f'🔴 {tx(p["title"]).upper()}\n\n{tx(p["summary"])}\n\n' + ''.join(f'▪️ {h}\n' for h in h3) + f'\n👉 Đọc đầy đủ tại: {url}\n\n#Solvera #SolveraLogistics #BreakingNews #Logistics #HangHai #XuatNhapKhau #HaiQuan\n\n--------///---------\n\n📞 Contact Us:\n- Hotline: +84 913 034 407\n- Email: admin@solveralogistics.vn\n- Website: https://solveralogistics.vn\n\n🌐 Connect with us:\n- LinkedIn: https://www.linkedin.com/company/solvera-logistics/\n- YouTube: https://www.youtube.com/@SOLVERALOGISTICS\n- Facebook: https://www.facebook.com/share/1CQrtY27t4/?mibextid=wwXIfr\n- Zalo: https://zalo.me/2938397457262576692\n- TikTok: https://www.tiktok.com/@solveralogistics\n- News: https://news.solveralogistics.vn'
 os.makedirs('fb', exist_ok=True)
 open(f'fb/{p["slug"]}.txt', 'w').write(cap)
-im = Image.open(p['image']).convert('RGB'); W, H = 1200, 630
-r = max(W/im.width, H/im.height); im = im.resize((int(im.width*r)+1, int(im.height*r)+1)); l = (im.width-W)//2; t = (im.height-H)//2
-im = im.crop((l, t, l+W, t+H)).convert('RGBA')
-g = Image.new('RGBA', (W, H)); d = ImageDraw.Draw(g)
-for y in range(H): d.line([(0, y), (W, y)], fill=(10, 42, 64, int(245*(y/H)**0.9)))
-im = Image.alpha_composite(im, g); d = ImageDraw.Draw(im)
+W, H = 1200, 630
+im = Image.new('RGB', (W, H)); d = ImageDraw.Draw(im)
+for y in range(H):
+    k = y/H; d.line([(0, y), (W, y)], fill=(int(10+8*k), int(42+14*k), int(64+20*k)))
+d.rectangle([0, 0, 14, H], fill=(224, 123, 32))
+lg = Image.open('images/logo.png').convert('RGBA'); lg.thumbnail((300, 110))
+bg = Image.new('RGBA', (lg.width+30, lg.height+24), (255, 255, 255, 255)); bg.paste(lg, (15, 12), lg); im.paste(bg.convert('RGB'), (50, 40))
 F = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+d.rounded_rectangle([50, 200, 330, 256], 8, fill=(200, 30, 40)); d.text((72, 212), 'BREAKING NEWS', font=ImageFont.truetype(F, 28), fill='white')
 ttl = tx(p['title']); ttl = re.sub(r'^Tin nóng \d+/\d+:\s*', '', ttl).upper()
-fs = 60; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 24)
-while len(lines) > 3: fs -= 4; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 30)
-y = H-110-len(lines)*(fs+10)
-for ln in lines: d.text((50, y), ln, font=f, fill='white'); y += fs+10
-im.convert('RGB').save(f'fb/{p["slug"]}.jpg', quality=88); im.convert('RGB').save(f'images/fb-{p["slug"]}.jpg', quality=88); print('OK fb/' + p['slug'])
+fs = 60; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 26)
+while len(lines) > 3: fs -= 4; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 32)
+y = 290
+for ln in lines: d.text((50, y), ln, font=f, fill='white'); y += fs+14
+d.text((50, H-60), 'news.solveralogistics.vn', font=ImageFont.truetype(F, 26), fill=(224, 123, 32))
+im.save(f'fb/{p["slug"]}.jpg', quality=90); im.save(f'images/fb-{p["slug"]}.jpg', quality=90); print('OK fb/' + p['slug'])
