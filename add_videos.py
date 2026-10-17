@@ -33,7 +33,7 @@ vcss = ('<style>.vid{position:relative;aspect-ratio:16/9;background:#0a2a40 cent
         '.vnote{background:#fff;color:#0a2a40;border:1px solid #d6e2ea;border-radius:12px;padding:14px 16px;margin:16px 0}.vnote a{color:#0b7e93;font-weight:700}</style>')
 def clean(t):
     t = re.sub(r'\s+\d+ (minutes?|seconds?|hours?).*$', '', t.strip())
-    parts = [x.strip() for x in re.split(r'\s+[I|]\s+', t) if x.strip() and not re.search(r'solver|sovler|sovera|^logistics (explained|in motion|qua)|^animation$|^ships|^tiếng việt$|^english$', x, re.I)]
+    parts = [x.strip() for x in re.split(r'\s+[I|]\s+', t) if x.strip() and not re.search(r'solver|sovler|sovera|^logistics (explained|in motion|qua)|^movement$|^animation$|^ships|^tiếng việt$|^english$', x, re.I)]
     return ' – '.join(parts) or t
 new = 0
 for ln in open(sys.argv[1], encoding='utf-8'):
@@ -48,7 +48,7 @@ for ln in open(sys.argv[1], encoding='utf-8'):
     rel_posts = [p for p in posts if p['category'] == 'Phân tích chuyên sâu'][:3]
     rel = '<section class="rel"><h2 id="doc-tiep">Đọc tiếp</h2>' + ''.join(f'<a href="/{p["slug"]}/">{html.escape(p.get("topic") or p["title"])}<span>{html.escape(p["summary"])}</span></a>' for p in rel_posts) + '</section>'
     dd, tx = desc.get(vid, (None, ''))
-    ser = 'Logistics in Motion' if re.search('motion', raw, re.I) else ('Logistics Animation' if (mk or re.search('animation', raw + tx, re.I)) else 'Geopolitics')
+    ser = 'Logistics in Motion' if re.search('motion|movement', raw, re.I) else ('Logistics Animation' if (mk or re.search('animation', raw + tx, re.I)) else 'Geopolitics')
     vcls = 'vid v' if 'short' in mk else 'vid'
     body = (f'<p>Video «{e}» từ kênh YouTube Solvera Logistics.</p>'
             f'<div class="{vcls}" id="v-{vid}" style="background-image:url({img})" role="button" aria-label="Phát video {e}"><button type="button" aria-label="Phát video">▶</button></div>'
