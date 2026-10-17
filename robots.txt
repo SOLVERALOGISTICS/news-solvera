@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://news.solveralogistics.vn/sitemap.xml

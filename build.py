@@ -67,7 +67,7 @@ def page(title, body, desc="", canonical="/"):
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{t}</title><meta name="description" content="{html.escape(desc)}">
-<link rel="canonical" href="https://{DOMAIN}{canonical}">
+<link rel="canonical" href="https://{DOMAIN}{canonical}"><meta property="og:url" content="https://{DOMAIN}{canonical}"><meta property="og:type" content="website"><meta property="og:site_name" content="Solvera News">
 <meta property="og:image" content="https://news.solveralogistics.vn/images/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(desc)}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap"><style>{CSS}</style></head><body>
 <header><div class="bar"><a class="brand" href="/"><img src="/images/logo.png" alt="Solvera Logistics" style="height:40px;display:block"><span>News</span></a>
@@ -86,7 +86,7 @@ def full_page(p):
     bc = bcss + f'<nav class="bc"><a class="home" href="/">← Trang chủ</a><i>›</i><a class="cat" href="/#c{ci}">← {html.escape(p["category"])}</a><i>›</i><span>{p["date"][8:]}/{p["date"][5:7]}/{p["date"][:4]}</span></nav>'
     mast = re.sub(r'(<div class="eyebrow">)[^<]*', lambda m: m.group(1) + "Solvera Logistics · " + html.escape(p["category"]), p["mast_html"], count=1)
     head = p["title"].split(":")[0] if ":" in p["title"] and len(p["title"].split(":")[0]) >= 25 else p["title"]
-    t = html.escape(trunc(head, 44) + " | Solvera News")
+    t = html.escape(trunc(head, 52) + " | Solvera News")
     ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": trunc(p["title"], 110),
         "datePublished": p["date"], "dateModified": p["date"], "inLanguage": "vi",
         "description": trunc(p["summary"], 155), "image": ["https://news.solveralogistics.vn/images/og.png"],
@@ -96,7 +96,7 @@ def full_page(p):
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{t}</title><meta name="description" content="{html.escape(trunc(p["summary"], 155))}"><script type="application/ld+json">{ld}</script>
-<link rel="canonical" href="https://{DOMAIN}/{p["slug"]}/">
+<link rel="canonical" href="https://{DOMAIN}/{p["slug"]}/"><meta property="og:url" content="https://{DOMAIN}/{p["slug"]}/"><meta property="og:type" content="article"><meta property="og:site_name" content="Solvera News">
 <meta property="og:image" content="https://news.solveralogistics.vn/images/{("fb-"+p["slug"]+".jpg") if os.path.exists("images/fb-"+p["slug"]+".jpg") else "og.png"}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta property="og:title" content="{t}"><meta property="og:description" content="{html.escape(p["summary"])}">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
 <style>{p["page_css"]}.ct-zalo{{background:#ff8d1c!important;border-color:#ff8d1c!important;border-top-color:#0a2a40!important;color:#0a2a40!important}}.ct-zalo span,.ct-zalo b{{color:#0a2a40!important}}.ct-wa{{background:#0b7e93!important;border-color:#0b7e93!important;border-top-color:#ff8d1c!important;color:#fff!important}}.ct-wa span,.ct-wa b{{color:#fff!important}}.ct-mail{{background:#e6f3f6!important;border-color:#0b7e93!important;color:#0a2a40!important}}.ct-mail span,.ct-mail b{{color:#0a2a40!important}}</style>
@@ -183,6 +183,11 @@ def main():
                 f'<p>{html.escape(p["summary"])}</p><span class="date">{p["date"]}</span></div></div>'
                 f'<article>{cover}{nav}{p["body_html"]}</article>')
         (d / "index.html").write_text(page(p["title"] + " | " + SITE, body, p["summary"], f'/{p["slug"]}/'), encoding="utf-8")
+    urls = [f"https://{DOMAIN}/"] + [f"https://{DOMAIN}/{p['slug']}/" for p in posts]
+    lm = {f"https://{DOMAIN}/{p['slug']}/": p["date"] for p in posts}
+    sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{u}</loc>" + (f"<lastmod>{lm[u]}</lastmod>" if u in lm else "") + "</url>\n" for u in urls) + "</urlset>\n"
+    (OUT / "sitemap.xml").write_text(sm, encoding="utf-8")
+    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: https://{DOMAIN}/sitemap.xml\n", encoding="utf-8")
     print(f"OK: {len(posts)} bài -> {OUT}")
 
 if __name__ == "__main__":
