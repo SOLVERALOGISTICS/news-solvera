@@ -109,7 +109,7 @@ tail=re.sub(r'<p class="src-note">.*?</p>','<p class="src-note"><i>Nguồn: tổ
 main_html=pre+'<p class="lead">'+esc(lead)+'</p>\n'+gl+'\n'+nav+'\n'+'\n'.join(body)+'\n'+tb+fcscript+qscript+tail
 slug='vefta-hiep-dinh-viet-nam-efta-18-10-2026'
 mast='<header class="mast"><div class="wrap">\n  <div class="eyebrow">Solvera Logistics · Phân tích chuyên sâu</div>\n  <h1>VEFTA: Hiệp định Việt Nam – EFTA sau 14 năm đàm phán</h1>\n  <p>Lộ trình thuế quan, quy tắc xuất xứ và cơ hội cho doanh nghiệp xuất nhập khẩu.</p>\n  <span class="date">Chủ Nhật, 18/10/2026</span>\n</div></header>'
-post=dict(slug=slug,date='2026-10-18',category='Phân tích chuyên sâu',topic='Hiệp định VEFTA Việt Nam – EFTA',title='VEFTA Việt Nam – EFTA sau 14 năm đàm phán: doanh nghiệp được gì?',summary='VEFTA ký 18/10/2026: EFTA xóa 100% thuế hàng công nghiệp, thủy sản Việt Nam; cộng gộp xuất xứ mở rộng, mở cửa dịch vụ và đầu tư.',image='images/vefta-01-hanh-trinh-14-nam.jpg',body_html='',page_css=tpl['page_css'],mast_html=mast,main_html=main_html)
+post=dict(slug=slug,date='2026-10-18',category='Phân tích chuyên sâu',topic='Hiệp định VEFTA Việt Nam – EFTA',title='VEFTA ký sáng 18/10: Việt Nam – EFTA sau 14 năm đàm phán',summary='VEFTA ký 18/10/2026: EFTA xóa 100% thuế hàng công nghiệp, thủy sản Việt Nam; cộng gộp xuất xứ mở rộng, mở cửa dịch vụ và đầu tư.',image='images/vefta-01-hanh-trinh-14-nam.jpg',body_html='',page_css=tpl['page_css'],mast_html=mast,main_html=main_html)
 print(len(post['summary']),len(post['title']))
 P0=[p for p in P0 if p['slug']!=slug]
 # add link to older Phân tích posts' rel
