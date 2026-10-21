@@ -13,8 +13,8 @@ open(f'fb/{p["slug"]}.txt', 'w').write(cap)
 W, H = 1200, 630
 im = Image.new('RGB', (W, H)); d = ImageDraw.Draw(im)
 for y in range(H):
-    k = y/H; d.line([(0, y), (W, y)], fill=(int(10+8*k), int(42+14*k), int(64+20*k)))
-d.rectangle([0, 0, 14, H], fill=(224, 123, 32))
+    k = y/H; d.line([(0, y), (W, y)], fill=(int(13-5*k), int(59+25*k), int(59+21*k)))
+d.rectangle([0, 0, 14, H], fill=(255, 122, 0))
 lg = Image.open('images/logo.png').convert('RGBA'); lg.thumbnail((300, 110))
 im.paste(lg, (46, 40), lg)
 F = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
@@ -24,5 +24,5 @@ fs = 60; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 26)
 while len(lines) > 3: fs -= 4; f = ImageFont.truetype(F, fs); lines = textwrap.wrap(ttl, 32)
 y = 290
 for ln in lines: d.text((50, y), ln, font=f, fill='white'); y += fs+14
-d.text((50, H-60), 'news.solveralogistics.vn', font=ImageFont.truetype(F, 26), fill=(224, 123, 32))
+d.text((50, H-60), 'news.solveralogistics.vn', font=ImageFont.truetype(F, 26), fill=(255, 122, 0))
 im.save(f'fb/{p["slug"]}.jpg', quality=90); im.save(f'images/fb-{p["slug"]}.jpg', quality=90)
