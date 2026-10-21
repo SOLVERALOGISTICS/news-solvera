@@ -15,7 +15,7 @@ CSS = """
 a{color:inherit;text-decoration:none}
 header{background:#fff;color:var(--navy);border-bottom:4px solid var(--teal)}
 .bar{max-width:1100px;margin:auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{font-weight:800;display:flex;align-items:center;gap:12px}.brand span{color:var(--teal);filter:brightness(1.6)}.brand b{color:var(--orange)}
+.brand{font-weight:800;display:flex;align-items:center;gap:12px}.brand span{color:#0d3b3b}.brand b{color:var(--orange)}
 .bar a.back{font-size:14px;color:var(--teal);border:1px solid var(--teal);padding:6px 12px;border-radius:6px}
 .hero{max-width:1100px;margin:auto;padding:28px 20px 8px}.hero h1{margin:0;font-size:28px;color:var(--navy);border-left:5px solid var(--orange);padding-left:12px}.hero p{margin:6px 0 0;color:var(--mut)}
 .grid{max-width:1100px;margin:auto;padding:16px 20px 48px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
