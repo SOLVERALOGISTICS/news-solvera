@@ -13,11 +13,11 @@ styles=''.join(s for s in re.findall(r'<style>.*?</style>',ref['main_html'],flag
 contact=ref['main_html'][ref['main_html'].index('<section class="contact"'):]
 css='<style>.ff{margin:20px 0}.ff img{width:100%;height:auto;border-radius:12px;display:block}.ff figcaption{font-size:.9rem;color:#0d3b3b;opacity:.8;margin-top:8px}.hvid{display:block;width:100%;aspect-ratio:16/9;margin:18px 0;border-radius:12px;background:#0d3b3b}</style>'
 C="Hoạt động CSR của Solvera Logistics"
-title="Đại diện Cty Solvera Logistics tham gia cổ vũ tinh thần vệ sinh môi trường"
-summ="Nhân dịp chào mừng Ngày Đại đoàn kết toàn dân tộc và Ngày Văn hóa Việt Nam 2026, Solvera Logistics hào hứng cổ vũ tinh thần làm vệ sinh môi trường."
+title="Bà Nguyễn Thị Tú Quỳnh, Phó Tổng Giám đốc Solvera Logistics, tham gia cổ vũ tinh thần vệ sinh môi trường"
+summ="Nhân dịp chào mừng Ngày Đại đoàn kết toàn dân tộc và Ngày Văn hóa Việt Nam 2026, bà Nguyễn Thị Tú Quỳnh, Phó Tổng Giám đốc Solvera Logistics, hào hứng cổ vũ tinh thần làm vệ sinh môi trường."
 cover=img("808a8d12","cover")
 b=['<p>Doanh nghiệp muốn làm được CSR thì mỗi cá nhân, mỗi tế bào của doanh nghiệp phải tự ý thức và thể hiện được điều đó ngay tại chính nơi mình ở hay nơi làm việc.</p>',
-'<p>Nhân dịp chào mừng Ngày Đại đoàn kết toàn dân tộc và Ngày Văn hóa Việt Nam năm 2026, Solvera Logistics hào hứng cổ vũ tinh thần làm vệ sinh môi trường.</p>',
+'<p>Nhân dịp chào mừng Ngày Đại đoàn kết toàn dân tộc và Ngày Văn hóa Việt Nam năm 2026, bà Nguyễn Thị Tú Quỳnh, Phó Tổng Giám đốc Solvera Logistics, hào hứng cổ vũ tinh thần làm vệ sinh môi trường.</p>',
 '<video class="hvid" controls playsinline preload="metadata" poster="/videos/csr-ve-sinh-moi-truong.jpg" aria-label="Solvera Logistics cổ vũ tinh thần vệ sinh môi trường"><source src="/videos/csr-ve-sinh-moi-truong.mp4" type="video/mp4"></video>',
 '<h2 id="van-hoa">Môi trường sạch đẹp cũng là văn hóa</h2>',
 '<p>Tháng 11 là tháng của những ngày hội lớn: Ngày hội Đại đoàn kết toàn dân tộc (18/11) và Ngày Văn hóa Việt Nam (24/11), ngày được thiết lập từ năm 2021 để tôn vinh các giá trị văn hóa của dân tộc. Trong chuỗi hoạt động hưởng ứng, bên cạnh những chương trình nghệ thuật, triển lãm, lễ hội, còn có một nét văn hóa rất đời thường: giữ gìn không gian sống chung sạch đẹp.</p>',
